@@ -86,21 +86,30 @@ jobs:
         env:
           VERSION: ${{ inputs.version || '1.1.0' }}
         run: |
-          set -e
-          APK="dist/BitKeyboard-$VERSION-release.apk"
-          test -f "$APK"
-          AAPT2="$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -1)"
-          APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/lib/apksigner.jar | sort -V | tail -1)"
-          echo "--- badging ---"
-          "$AAPT2" dump badging "$APK" | grep -E "^package:|sdkVersion|uses-permission|launchable-activity|provides-component"
-          echo "--- tanda tangan ---"
-          java -jar "$APKSIGNER" verify --min-sdk-version 21 --print-certs "$APK" \
-            > /tmp/verify.log 2>&1
-          grep -v "^WARNING" /tmp/verify.log || true
-          grep -q "Verifies" /tmp/verify.log
-          echo "--- ukuran & checksum ---"
-          ls -l "$APK"
-          sha256sum "$APK"
+          set -o pipefail
+          {
+            APK="dist/BitKeyboard-$VERSION-release.apk"
+            test -f "$APK"
+            echo "--- berkas ---"
+            ls -l "$APK"
+            sha256sum "$APK"
+            echo "--- manifest ---"
+            AAPT2="$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -1)"
+            "$AAPT2" dump badging "$APK" 2>&1 | head -8
+            echo "--- tanda tangan ---"
+            APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/lib/apksigner.jar | sort -V | tail -1)"
+            java -jar "$APKSIGNER" verify --min-sdk-version 21 --print-certs "$APK" 2>&1
+          } | tee /tmp/verify-step.log
+
+      - name: Anotasi log
+        if: always()
+        run: |
+          echo "=== build.log (25 baris terakhir) ==="
+          tail -25 /tmp/build.log 2>/dev/null || echo "(tidak ada)"
+          echo "=== verify-step.log ==="
+          cat /tmp/verify-step.log 2>/dev/null || echo "(tidak ada)"
+          { tail -20 /tmp/build.log 2>/dev/null; cat /tmp/verify-step.log 2>/dev/null; } |
+            while IFS= read -r line; do echo "::notice title=ci-log::$line"; done
 
       - name: Lampirkan ke Release
         env:
