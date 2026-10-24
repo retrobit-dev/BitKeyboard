@@ -1,0 +1,244 @@
+# Frasa umum bahasa Indonesia untuk prediksi kata berikutnya.
+# Satu frasa per baris; setiap pasangan kata berurutan diberi bobot.
+terima kasih banyak
+sama sama
+apa kabar
+selamat pagi
+selamat siang
+selamat sore
+selamat malam
+selamat datang
+selamat ulang tahun
+selamat bekerja
+selamat berlibur
+semoga berhasil
+semoga sehat selalu
+semoga harimu menyenangkan
+mohon maaf atas ketidaknyamanan
+maaf saya terlambat
+tolong bantu saya
+bantu saya sebentar
+saya butuh bantuan
+saya ingin bertanya
+saya mau pergi
+saya mau makan
+saya sedang belajar
+saya sudah selesai
+saya belum selesai
+saya tidak tahu
+saya rasa begitu
+saya pikir begitu
+saya harap begitu
+kamu sudah makan
+kamu mau kemana
+kita harus pergi
+kita harus pulang
+mereka tidak datang
+apa yang terjadi
+apa yang kamu lakukan
+apa yang sedang dilakukan
+yang tidak perlu
+tidak ada masalah
+tidak ada waktu
+tidak bisa datang
+tidak pernah terlambat
+sudah selesai semua
+belum selesai juga
+bisa jadi seperti itu
+bisa saja terjadi
+harus bisa lebih baik
+mau pergi kemana
+mau makan apa
+sedang makan siang
+sedang belajar matematika
+sedang mengerjakan tugas
+pergi ke sekolah
+pergi ke kantor
+pergi ke pasar
+kembali ke rumah
+sampai di rumah
+tinggal di Jakarta
+berada di sini
+ada di mana
+di rumah saya
+di kantor pusat
+di sekolah dasar
+di jalan raya
+ke rumah sakit
+ke kantor polisi
+dari rumah ke kantor
+dari sini ke sana
+ke sana kemari
+seperti ini juga
+seperti itu juga
+hal yang penting
+orang yang baik
+waktu yang tepat
+tempat yang nyaman
+cara yang benar
+masalah yang besar
+sesuatu yang baru
+satu sama lain
+hari ini cerah
+besok pagi saja
+kemarin malam hujan
+minggu depan libur
+bulan depan mulai
+tahun lalu pergi
+jam berapa sekarang
+berapa lama lagi
+berapa banyak orang
+di mana rumahmu
+ke mana saja
+dari mana asalnya
+siapa yang datang
+apa saja yang perlu
+bagaimana cara kerjanya
+mengapa tidak mencoba
+kapan saja bisa
+mohon duduk sebentar
+hati hati di jalan
+pelan pelan saja
+cepat sekali selesai
+sangat baik sekali
+sangat penting untuk
+lebih baik begini
+paling tidak bisa
+tidak pernah menyerah
+tidak lagi bekerja
+masih ada waktu
+masih belum selesai
+sudah pernah ke sana
+pernah pergi sendiri
+sering kali terjadi
+jarang sekali begini
+selalu ada jalan
+banyak orang datang
+sedikit lagi selesai
+sebentar lagi pulang
+lain kali saja
+suatu hari nanti
+setiap hari kerja
+sepanjang hari ini
+sepanjang malam itu
+satu hari lagi
+dua orang teman
+tiga tahun lalu
+lima menit lagi
+sepuluh menit kemudian
+satu jam kemudian
+dua jam perjalanan
+seratus persen benar
+lima puluh ribu
+dua puluh satu
+tiga puluh menit
+terima kasih atas bantuannya
+tidak apa apa
+apa pun yang terjadi
+siapa pun boleh
+kapan pun bisa
+di mana pun berada
+sama sekali tidak
+sekali lagi terima kasih
+lagi lagi terjadi
+satu satunya cara
+masing masing orang
+teman teman sekalian
+anak anak sekolah
+orang orang di sana
+kata kata mutiara
+hal hal kecil
+rumah rumah penduduk
+buku buku pelajaran
+makanan makanan sehat
+minuman minuman dingin
+alat alat tulis
+kata kunci
+kata kerja
+kata benda
+kata sifat
+kalimat utama
+paragraf pertama
+bab berikutnya
+halaman berikutnya
+nomor telepon
+alamat surel
+kata sandi
+akun pengguna
+media sosial
+jaringan internet
+kecerdasan buatan
+pembelajaran mesin
+basis data
+perangkat lunak
+perangkat keras
+sistem operasi
+ilmu komputer
+ilmu pengetahuan
+penelitian terbaru
+hasil penelitian
+data penelitian
+metode penelitian
+analisis data
+kesimpulan akhir
+daftar pustaka
+tinjauan pustaka
+rumusan masalah
+tujuan penelitian
+manfaat penelitian
+contoh soal
+pembahasan lengkap
+jawaban benar
+nilai akhir
+akhir semester
+ujian nasional
+tugas akhir
+skripsi sarjana
+gelar akademik
+fakultas teknik
+program studi
+mata kuliah
+dosen pembimbing
+kampus merdeka
+belajar bersama
+kerja kelompok
+diskusi kelas
+presentasi hasil
+laporan akhir
+catatan penting
+buku catatan
+pena dan kertas
+meja belajar
+ruang kelas
+perpustakaan kampus
+laboratorium komputer
+percobaan kimia
+reaksi kimia
+rumus matematika
+persamaan kuadrat
+fungsi linear
+integral tentu
+limit fungsi
+teorema pythagoras
+hukum newton
+hukum ohm
+energi kinetik
+medan magnet
+gelombang elektromagnetik
+tata surya
+planet bumi
+bintang jatuh
+cuaca hari ini
+musim hujan
+musim kemarau
+suhu udara
+tekanan darah
+denyut jantung
+sistem imun
+kesehatan mental
+olahraga pagi
+makanan sehat
+pola makan
+istirahat cukup
+tidur nyaman
+semangat pagi

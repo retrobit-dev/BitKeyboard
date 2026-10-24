@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>BitKeyboard — demo keyboard Indonesia</title>
+  <meta name="description" content="Demo BitKeyboard: keyboard Bahasa Indonesia dengan glide typing, saran kata, autocorrect, simbol ilmiah, emoji, dan voice typing." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+
+  <nav class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-mark"><i></i><i></i><i></i></span>
+      <span>BitKeyboard</span>
+      <em>demo</em>
+    </a>
+    <div class="toplinks">
+      <a href="#fitur">Fitur</a>
+      <a href="#coba">Coba glide</a>
+      <a href="https://github.com/retrobit-dev/BitKeyboard" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <main class="layout">
+    <section class="intro">
+      <div class="eyebrow"><span class="dot"></span> Open source · 100% offline · Bahasa Indonesia</div>
+      <h1>Ketik lebih cepat.<br /><span class="grad">Tanpa pindah layer.</span></h1>
+      <p class="lede">
+        BitKeyboard menggabungkan <b>glide typing</b>, saran kata Bahasa Indonesia,
+        autocorrect, simbol matematika di sudut tombol, dan voice typing —
+        tanpa iklan dan tanpa izin internet.
+      </p>
+
+      <div class="chips">
+        <span>⌁ glide typing</span><span>✓ autocorrect</span><span>∑ simbol ilmiah</span><span>☺ emoji</span><span>🎙 suara</span>
+      </div>
+
+      <div class="cards" id="fitur">
+        <article class="card">
+          <div class="card-icon">⌁</div>
+          <h3>Glide typing</h3>
+          <p>Geser jari dari huruf ke huruf. Decoder berbasis bentuk jalur + DTW, dilatih dengan 38.990 kata Indonesia.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">✓</div>
+          <h3>Saran &amp; autocorrect</h3>
+          <p>Pelengkapan awalan, koreksi ejaan Levenshtein, prediksi kata berikutnya, dan kamus pribadi yang belajar.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">∑</div>
+          <h3>Simbol di sudut</h3>
+          <p>± √ π ∞ ∫ ∑ α β ω ∂ ∇ dan masih banyak lagi, cukup geser ke sudut tombol. Ada layer matematika penuh.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon">🎙</div>
+          <h3>Voice typing &amp; emoji</h3>
+          <p>Tombol mikrofon memanggil layanan suara sistem (id-ID). Panel emoji dengan tab dan riwayat pemakaian.</p>
+        </article>
+      </div>
+
+      <div class="stats card" aria-live="polite">
+        <div><strong id="statWords">—</strong><span>kata di kamus</span></div>
+        <div><strong id="statLoad">—</strong><span>waktu muat</span></div>
+        <div><strong id="statGlide">—</strong><span>decode glide</span></div>
+        <div><strong id="statSuggest">—</strong><span>saran kata</span></div>
+      </div>
+
+      <p class="fine">
+        Demo ini menjalankan <b>kode Kotlin yang sama</b> dengan aplikasi Android
+        (kamus, trie, suggester, decoder glide) yang dikompilasi ke JavaScript.
+        Perbedaan hanya pada lapisan tampilan.
+      </p>
+    </section>
+
+    <section class="device" id="coba">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>09.41</span><span class="sig">▮▮▮ &nbsp;92%</span></div>
+          <div class="apphead">
+            <div class="avatar">B</div>
+            <div class="who"><strong>BitKeyboard</strong><span id="appStatus">siap mengetik</span></div>
+            <div class="dots">•••</div>
+          </div>
+
+          <div class="chat">
+            <div class="bubble">
+              Coba <b>geser</b> di keyboard, ketuk <b>∑</b> untuk simbol,
+              atau tekan tombol <b>🎙</b> untuk bicara.
+            </div>
+            <textarea id="editor" rows="2" spellcheck="false" autocomplete="off" inputmode="none"
+              placeholder="Tulis pesan…"></textarea>
+          </div>
+
+          <div class="suggestbar">
+            <div class="suggestions" id="suggestions"></div>
+            <button class="icon" id="mic" title="Voice typing" aria-label="Voice typing">🎙</button>
+            <button class="icon" id="gear" title="Pengaturan" aria-label="Pengaturan">⚙</button>
+          </div>
+
+          <div class="keyboard" id="keyboard">
+            <svg class="trail" id="trail" aria-hidden="true">
+              <polyline id="trailLine" points=""></polyline>
+            </svg>
+          </div>
+          <div class="homebar"></div>
+        </div>
+      </div>
+
+      <div class="card presets">
+        <div class="presets-head">
+          <h3>Coba glide tanpa menggeser</h3>
+          <label class="switch">
+            <input type="checkbox" id="glideToggle" checked />
+            <span class="slider"></span>
+            <span class="switch-label">Glide</span>
+          </label>
+        </div>
+        <p class="muted">Pilih kata — jalur jari disintesis di keyboard, lalu decoder yang sama menebak kata.</p>
+        <div class="preset-row">
+          <button class="preset" data-word="aku">aku</button>
+          <button class="preset" data-word="matematika">matematika</button>
+          <button class="preset" data-word="pelajaran">pelajaran</button>
+          <button class="preset" data-word="terima kasih">terima kasih</button>
+        </div>
+        <div class="result" id="presetResult">Hasil decode akan muncul di sini.</div>
+      </div>
+
+      <div class="card tip">
+        <h3>Cara mencoba</h3>
+        <ul>
+          <li><b>Glide:</b> tekan dan geser dari huruf pertama ke huruf terakhir, lepaskan.</li>
+          <li><b>Simbol sudut:</b> tekan tombol lalu geser sedikit ke sudut (mis. <b>q</b> ke kiri atas = <b>1</b>).</li>
+          <li><b>Aksen:</b> tahan <b>e</b> untuk è é ê ë.</li>
+          <li><b>Angka &amp; ilmiah:</b> ketuk <b>?123</b> lalu <b>ƒx</b>.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>BitKeyboard · keyboard Indonesia offline</span>
+    <span>Kamus: FrequencyWords (CC BY-SA 4.0) + Sastrawi (MIT)</span>
+    <span>Demo Kotlin/JS</span>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="dist/bitcore.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

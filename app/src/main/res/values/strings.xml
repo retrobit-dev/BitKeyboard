@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BitKeyboard</string>
+    <string name="ime_name">BitKeyboard</string>
+    <string name="ime_description">Keyboard Bahasa Indonesia dengan glide typing, saran kata, autocorrect, simbol ilmiah, dan emoji. Tanpa iklan dan tanpa internet.</string>
+    <string name="subtype_id">Indonesia</string>
+    <string name="settings_activity">Pengaturan BitKeyboard</string>
+</resources>
