@@ -150,11 +150,14 @@ UNSIGNED="$OUT/BitKeyboard-$VERSION-release-unsigned.apk"
   --out "$OUT/BitKeyboard-$VERSION-release.apk" "$BUILD/unsigned.apk" 2>&1 | grep -v "^WARNING" || true
 
 echo "==> verifikasi tanda tangan"
+SIGN_LOG="$BUILD/verify.log"
 if ! "$JAVA" -jar "$APKSIGNER" verify --min-sdk-version 21 \
-    "$OUT/BitKeyboard-$VERSION-release.apk" 2>&1 | grep -v "^WARNING"; then
+    "$OUT/BitKeyboard-$VERSION-release.apk" >"$SIGN_LOG" 2>&1; then
   echo "Verifikasi tanda tangan GAGAL" >&2
+  cat "$SIGN_LOG" >&2
   exit 1
 fi
+grep -v "^WARNING" "$SIGN_LOG" || true
 
 rm -f "$UNSIGNED"
 echo

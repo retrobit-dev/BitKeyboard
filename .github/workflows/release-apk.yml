@@ -84,7 +84,10 @@ jobs:
           echo "--- badging ---"
           "$AAPT2" dump badging "$APK" | grep -E "^package:|sdkVersion|uses-permission|launchable-activity|provides-component"
           echo "--- tanda tangan ---"
-          java -jar "$APKSIGNER" verify --min-sdk-version 21 --print-certs "$APK" | grep -v "^WARNING"
+          java -jar "$APKSIGNER" verify --min-sdk-version 21 --print-certs "$APK" \
+            > /tmp/verify.log 2>&1
+          grep -v "^WARNING" /tmp/verify.log || true
+          grep -q "Verifies" /tmp/verify.log
           echo "--- ukuran & checksum ---"
           ls -l "$APK"
           sha256sum "$APK"
