@@ -1,0 +1,98 @@
+name: Build APK release
+
+# Membangun APK rilis di runner GitHub lalu melampirkannya sebagai aset
+# Release, sehingga bisa diunduh langsung dari halaman Releases tanpa
+# perlu clone repo.
+#
+# Jalankan otomatis setiap push ke branch sesi, atau manual lewat tab Actions.
+
+on:
+  push:
+    branches:
+      - 'arena/**'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versi aplikasi (mis. 1.1.0)'
+        required: false
+        default: '1.1.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Siapkan Android SDK
+        run: |
+          set -e
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          echo "SDK=$SDK"
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          SDKMANAGER="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -f "$SDK/platforms/android-35/android.jar" ]; then
+            echo "Memasang platforms;android-35"
+            yes | "$SDKMANAGER" "platforms;android-35" >/dev/null || true
+          fi
+          if [ -z "$(ls -d "$SDK"/build-tools/* 2>/dev/null)" ]; then
+            echo "Memasang build-tools;35.0.0"
+            yes | "$SDKMANAGER" "build-tools;35.0.0" >/dev/null || true
+          fi
+          test -f "$SDK/platforms/android-35/android.jar"
+          ls "$SDK"/build-tools
+
+      - name: Unduh Kotlin compiler
+        run: |
+          set -e
+          KOTLIN_VERSION=2.1.0
+          curl -sSL -o /tmp/kotlin.zip \
+            "https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_VERSION}/kotlin-compiler-${KOTLIN_VERSION}.zip"
+          unzip -q /tmp/kotlin.zip -d "$HOME/kotlin"
+          "$HOME/kotlin/kotlinc/bin/kotlinc" -version
+          echo "KOTLINC=$HOME/kotlin/kotlinc/bin/kotlinc" >> "$GITHUB_ENV"
+
+      - name: Bangun APK
+        run: |
+          set -e
+          chmod +x tools/build_apk.sh
+          VERSION="${{ inputs.version || '1.1.0' }}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          tools/build_apk.sh "$VERSION"
+          cd dist
+          sha256sum ./*.apk > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Lampirkan ke Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ inputs.version || '1.1.0' }}
+        run: |
+          set -e
+          TAG="v$VERSION"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" \
+              --title "BitKeyboard $VERSION" \
+              --notes "APK release BitKeyboard $VERSION (minSdk 21, targetSdk 35)."
+          fi
+          gh release upload "$TAG" \
+            "dist/BitKeyboard-$VERSION-release.apk" \
+            "dist/SHA256SUMS.txt" \
+            --clobber
+          gh release view "$TAG" --json assets --jq '.assets[].name'
+
+      - name: Simpan APK sebagai artefak
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitkeyboard-apk
+          path: dist/*.apk
+          retention-days: 30

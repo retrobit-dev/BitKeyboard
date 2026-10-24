@@ -30,24 +30,33 @@ export PATH="$JAVA_HOME/bin:$PATH"
 JAVA="$JAVA_HOME/bin/java"
 
 KOTLINC="${KOTLINC:-kotlinc}"
-AAPT2="${AAPT2:-aapt2}"
 KEYSTORE="${KEYSTORE:-$ROOT/keystore/bitkeyboard-release.jks}"
 STORE_PASS="${STORE_PASS:-bitkeyboard}"
 KEY_ALIAS="${KEY_ALIAS:-bitkeyboard}"
 
+SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/nonexistent}}"
 if [ -z "${ANDROID_JAR:-}" ]; then
-  ANDROID_JAR="${ANDROID_HOME:-}/platforms/android-35/android.jar"
+  ANDROID_JAR="${SDK}/platforms/android-35/android.jar"
 fi
 if [ ! -f "$ANDROID_JAR" ]; then
   echo "android.jar tidak ditemukan. Set ANDROID_JAR ke platform android-35." >&2
   exit 1
 fi
 
+# Cari alat build dari build-tools bila tidak diberikan lewat variabel lingkungan.
+if [ -z "${AAPT2:-}" ]; then
+  AAPT2="$(ls "$SDK"/build-tools/*/aapt2 2>/dev/null | sort -V | tail -1 || true)"
+  [ -n "$AAPT2" ] || AAPT2="$(command -v aapt2 || true)"
+fi
 if [ -z "${D8_JAR:-}" ]; then
-  D8_JAR="$(ls "${ANDROID_HOME:-/nonexistent}"/build-tools/*/lib/d8.jar 2>/dev/null | sort -V | tail -1 || true)"
+  D8_JAR="$(ls "$SDK"/build-tools/*/lib/d8.jar 2>/dev/null | sort -V | tail -1 || true)"
 fi
 if [ -z "${APKSIGNER:-}" ]; then
-  APKSIGNER="$(ls "${ANDROID_HOME:-/nonexistent}"/build-tools/*/lib/apksigner.jar 2>/dev/null | sort -V | tail -1 || true)"
+  APKSIGNER="$(ls "$SDK"/build-tools/*/lib/apksigner.jar 2>/dev/null | sort -V | tail -1 || true)"
+fi
+if [ -z "$AAPT2" ]; then
+  echo "aapt2 tidak ditemukan. Set AAPT2 atau ANDROID_HOME." >&2
+  exit 1
 fi
 for tool in "$D8_JAR" "$APKSIGNER"; do
   if [ ! -f "$tool" ]; then
