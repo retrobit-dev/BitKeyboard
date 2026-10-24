@@ -1,0 +1,29 @@
+# Build outputs
+__pycache__/
+*.pyc
+build/
+app/build/
+.gradle/
+local.properties
+*.apk
+*.aab
+*.hprof
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Data unduhan alat bantu (dibuat ulang oleh tools/build_dictionary.py)
+tools/.cache/
+
+# Hasil build APK dan demo Kotlin/JS
+dist/
+demo/dist/
+
+# Berkas tanda tangan (id-sig) tidak perlu disimpan
+*.idsig
+
+# OS
+.DS_Store
+Thumbs.db

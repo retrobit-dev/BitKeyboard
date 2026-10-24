@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:colorAccent">#4C8DFF</item>
+        <item name="android:windowBackground">#0F141A</item>
+        <item name="android:statusBarColor">#0F172A</item>
+        <item name="android:navigationBarColor">#0F172A</item>
+    </style>
+
+    <style name="VoiceTheme" parent="android:Theme.Material.Dialog.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimAmount">0.45</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>

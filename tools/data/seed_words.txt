@@ -1,0 +1,90 @@
+# Kata tambahan (domain ilmiah, teknologi, dan kehidupan sehari-hari) yang sering
+# tidak muncul di korpus subtitle. Format: satu kata per baris, # komentar.
+# Frekuensi sintetis diberikan otomatis oleh build_dictionary.py (dominan menengah).
+# -- Matematika --
+aljabar kalkulus trigonometri geometri statistika probabilitas peluang matriks determinan
+vektor skalar tensor turunan integral diferensial limit fungsi persamaan pertidaksamaan
+logaritma eksponen polinomial kuadrat kubik akar pangkat pecahan desimal persen rasio
+proporsi barisan deret aritmetika algoritma komputasi numerik diskrit kontinu variabel
+konstanta parameter koefisien ekspresi persamaan kuadratik linear nonlinear simetris
+asimtot hiperbola parabola elips lingkaran segitiga persegi persegi panjang trapesium
+jajar genjang belah ketupat bola kubus balok tabung kerucut prisma limas sudut derajat
+radian sinus kosinus tangen sekan kosekan kotangen hipotenusa diameter jari-jari keliling
+luas volume permukaan integral lipat diferensial parsial gradien divergensi curl laplace
+fourier transformasi matriks identitas invers transpose ortogonal eigen nilai eigen vektor
+bilangan prima komposit bulat asli cacah rasional irasional real imajiner kompleks
+himpunan irisan gabungan komplemen kardinalitas relasi fungsi injektif surjektif bijektif
+logika proposisi predikat kuantor implikasi kontraposisi konjungsi disjungsi negasi
+kombinatorika permutasi kombinasi faktorial binomial peluang bersyarat distribusi normal
+binomial poisson eksponensial seragam variansi simpangan baku rata-rata median modus
+kuartil desil persentil korelasi regresi kovarians hipotesis signifikan sampel populasi
+-- Fisika --
+fisika mekanika kinematika dinamika gravitasi massa berat gaya gesek momentum impuls
+energi kinetik potensial usaha daya tekanan suhu kalor termodinamika entropi entalpi
+isoterm adiabatik isobarik isokorik konduksi konveksi radiasi gelombang frekuensi amplitudo
+panjang gelombang periode cepat rambat bunyi resonansi difraksi interferensi polarisasi
+refraksi refleksi cermin lensa fokus optik cahaya foton elektron proton neutron atom
+molekul ion isotop radioaktif nuklir reaksi fisi fusi relativitas kuantum mekanika kuantum
+elektromagnetik medan listrik magnetik muatan arus tegangan hambatan resistor kapasitor
+induktor rangkaian seri paralel daya listrik energi listrik konduktor isolator semikonduktor
+superkonduktor magnet feromagnetik paramagnetik diamagnetik fluks induksi osilasi pegas
+bandul ayunan redaman resonansi viskositas fluida hidrostatik hidrodinamika pascal archimedes
+bernoulli torricelli kapilaritas tegangan permukaan berat jenis massa jenis kalor jenis
+kalor lebur kalor uap pemuaian konduktivitas radiasi elektromagnetik spektrum sinar gamma
+sinar x ultraviolet inframerah mikro gelombang radio plasma kristal difraksi kisi
+-- Kimia --
+kimia atom molekul senyawa unsur campuran larutan asam basa garam oksidasi reduksi
+redoks elektrolisis elektroda katoda anoda ion kation anion valensi ikatan kovalen ionik
+logam hidrogen karbon nitrogen oksigen fluor neon natrium magnesium aluminium silikon fosfor
+belerang klor argon kalium kalsium skandium titanium vanadium kromium mangan besi kobalt
+nikel tembaga seng galium germanium arsenik selenium bromin kripton rubidium stronsium
+itrium zirkonium niobium molibdenum teknesium rutenium rodium paladium perak kadmium
+indium timah antimon telurium iodin xenon sesium barium lantanum serium praseodimium
+neodimium prometium samarium europium gadolinium terbium disprosium holmium erbium tulium
+iterbium lutesium hafnium tantalum wolfram renium osmium iridium platina emas merkuri
+talium timbal bismut polonium astatin radon fransium radium aktinium torium protaktinium
+uranium neptunium plutonium amerisium kurium berkelium kalifornium einsteinium fermium
+mendelevium nobelium lawrensium rutherfordium dubnium seaborgium bohrium hasium meitnerium
+darmstadtium roentgenium kopernisium nihonium flerovium moskovium livermorium tenesin
+oganeson katalis enzim inhibitor konsentrasi molaritas molalitas normalitas titrasi
+distilasi ekstraksi kromatografi spektroskopi kalorimetri stoikiometri kesetimbangan
+termokimia elektrokimia polimer monomer protein karbohidrat lipid vitamin mineral
+-- Biologi --
+biologi sel jaringan organ sistem organisme bakteri virus jamur protozoa alga tumbuhan
+hewan ekosistem populasi komunitas biosfer habitat adaptasi evolusi seleksi mutasi genetika
+dna rna kromosom gen alel dominan resesif fenotipe genotipe mitosis meiosis fotosintesis
+respirasi klorofil stomata xilem floem akar batang daun bunga buah biji penyerbukan
+pembuahan embrio janin hormon insulin adrenalin metabolisme katabolisme anabolisme enzim
+antibodi antigen imun vaksin antibiotik parasit simbiosis mutualisme komensalisme
+parasitisme predator mangsa rantai makanan jaring makanan dekomposer produsen konsumen
+biodiversitas konservasi ekologi pencemaran polusi daur ulang nutrisi kolesterol
+karbohidrat protein lemak serat kalsium zat besi hemoglobin neuron sinapsis refleks
+otak jantung paru ginjal hati lambung usus kulit tulang otot darah pembuluh arteri vena
+-- Teknologi & komputer --
+komputer komputasi perangkat lunak perangkat keras pemrograman pemrogram algoritma
+data basis data berkas folder direktori pengguna sandi surel tautan peramban laman situs
+jaringan server klien protokol internet intranet basis data tabel kueri indeks
+prosesor memori penyimpanan cakram diska flash kartu grafis papan induk catu daya
+sistem operasi aplikasi antarmuka perintah terminal baris perintah skrip variabel
+fungsi kelas objek metode pewarisan enkapsulasi polimorfisme abstraksi rekursi iterasi
+debugging pengujian integrasi kompilasi interpreter biner heksadesimal oktal bit byte
+kilobyte megabyte gigabyte terabyte piksel resolusi enkripsi dekripsi hash kata sandi
+autentikasi otorisasi server basis data awan komputasi awan virtual mesin virtual kontainer
+robotika sensor aktuator kecerdasan buatan pembelajaran mesin jaringan saraf tiruan
+pengolahan citra pengolahan bahasa alami visi komputer data besar analitik
+pengguna antarmuka pengguna pengalaman pengguna aksesibilitas
+-- Umum & sehari-hari --
+gawai unggah unduh swafoto daring luring ponsel telepon pesan obrolan panggilan
+notifikasi pengaturan pembaruan pemutakhiran pencadangan pemulihan
+berkas unduhan tangkapan layar pintasan geser ketuk tekan tahan
+kantor sekolah kampus kelas guru dosen murid mahasiswa pelajaran tugas ujian
+kesehatan rumah sakit dokter perawat obat resep dosis pasien klinik apotek
+pemerintah negara provinsi kabupaten kecamatan kelurahan desa warga masyarakat
+ekonomi keuangan anggaran pajak investasi tabungan pinjaman kredit debit
+perjalanan kendaraan motor mobil bus kereta pesawat kapal pelabuhan bandara tiket
+makanan minuman sarapan makan siang makan malam resep dapur bumbu
+olahraga sepak bola basket voli bulu tangkis renang lari sepeda senam
+musik lagu penyanyi band gitar piano drum konser festival
+film bioskop aktor aktris sutradara cerita tokoh alur latar tema
+buku novel cerpen puisi artikel berita koran majalah penulis penerbit
+alam lingkungan cuaca hujan angin awan matahari bulan bintang langit
