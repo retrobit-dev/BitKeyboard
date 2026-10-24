@@ -95,7 +95,7 @@ jobs:
             sha256sum "$APK"
             echo "--- manifest ---"
             AAPT2="$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -1)"
-            "$AAPT2" dump badging "$APK" 2>&1 | head -8
+            "$AAPT2" dump badging "$APK" 2>&1 | sed -n '1,8p'
             echo "--- tanda tangan ---"
             APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/lib/apksigner.jar | sort -V | tail -1)"
             java -jar "$APKSIGNER" verify --min-sdk-version 21 --print-certs "$APK" 2>&1
