@@ -13,21 +13,10 @@ ke sudut tombol), **glide typing**, **saran kata + autocorrect**, **simbol matem
   tema dan warna aksen, getaran, dikte suara, kamus pribadi, sampai
   ekspor/impor pengaturan.
 
-**APK rilis siap pasang:** [`dist/BitKeyboard-1.1.0-release.apk`](dist/BitKeyboard-1.1.0-release.apk)
-(2,7 MB, ditandatangani v1+v2+v3, minSdk 21, targetSdk 35, versionCode 2).
-
-```
-SHA-256  1f44795ed4ebe41b073b92cb5be3854091ea5dae703dbd0a59b78a63d211cbe1
-```
-
-Tautan unduh langsung (selalu versi terbaru):
-
-- [`dist/BitKeyboard-release.apk`](dist/BitKeyboard-release.apk)
-- [`dist/BitKeyboard-1.1.0-release.apk`](dist/BitKeyboard-1.1.0-release.apk)
-- Checksum: [`dist/SHA256SUMS.txt`](dist/SHA256SUMS.txt)
-
-Di ponsel: buka tautan berkas, unduh, lalu buka dari pengelola berkas dan
-izinkan "instal dari sumber tidak dikenal" untuk pengelola berkas tersebut.
+**Unduh APK:** [Releases → BitKeyboard 1.1.0](https://github.com/retrobit-dev/BitKeyboard/releases/latest)
+— aset `BitKeyboard-1.1.0-release.apk` (2,4 MB, ditandatangani v1+v2+v3, minSdk 21,
+targetSdk 35, versionCode 2). Checksum tersedia sebagai aset `SHA256SUMS.txt`
+di halaman rilis yang sama.
 
 ---
 
@@ -127,11 +116,13 @@ Perubahan langsung dipakai keyboard yang sedang terbuka.
 
 ### APK rilis (paling cepat)
 
-Unduh [`dist/BitKeyboard-1.1.0-release.apk`](dist/BitKeyboard-1.1.0-release.apk)
-lalu pasang di perangkat:
+1. Buka halaman **[Releases](https://github.com/retrobit-dev/BitKeyboard/releases/latest)**.
+2. Di bagian **Assets**, unduh `BitKeyboard-1.1.0-release.apk`
+   (opsional: `SHA256SUMS.txt` untuk memeriksa berkas).
+3. Pasang:
 
 ```bash
-adb install -r dist/BitKeyboard-1.1.0-release.apk
+adb install -r BitKeyboard-1.1.0-release.apk
 ```
 
 Atau salin APK ke ponsel dan buka dari pengelola berkas (izinkan
@@ -188,6 +179,12 @@ tools/build_apk.sh 1.1.0
 Skrip memakai `tools/apkpack.py` untuk menambahkan `classes.dex` ke APK hasil
 `aapt2 link` sekaligus menyelaraskan `resources.arsc`/`classes.dex` pada batas
 4 byte (setara `zipalign -p 4`).
+
+Build otomatis di GitHub Actions: setiap push ke branch `arena/**` (atau
+menjalankan **Actions → Build APK release** secara manual) membangun APK di
+runner GitHub, memverifikasi tanda tangan dan manifest, lalu melampirkannya ke
+Release. Berkas APK tidak disimpan di dalam repo agar tidak ada dua biner
+berbeda untuk versi yang sama.
 
 ---
 

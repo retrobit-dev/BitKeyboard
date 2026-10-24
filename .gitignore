@@ -6,7 +6,6 @@ app/build/
 .gradle/
 local.properties
 *.apk
-!dist/*.apk
 *.aab
 *.hprof
 
@@ -18,7 +17,8 @@ local.properties
 # Data unduhan alat bantu (dibuat ulang oleh tools/build_dictionary.py)
 tools/.cache/
 
-# Demo hasil kompilasi Kotlin/JS
+# Hasil build APK dan demo Kotlin/JS
+dist/
 demo/dist/
 
 # Berkas tanda tangan (id-sig) tidak perlu disimpan

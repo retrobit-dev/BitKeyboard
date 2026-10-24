@@ -1,2 +1,0 @@
-1f44795ed4ebe41b073b92cb5be3854091ea5dae703dbd0a59b78a63d211cbe1  dist/BitKeyboard-1.1.0-release.apk
-1f44795ed4ebe41b073b92cb5be3854091ea5dae703dbd0a59b78a63d211cbe1  dist/BitKeyboard-release.apk

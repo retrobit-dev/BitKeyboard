@@ -72,6 +72,23 @@ jobs:
           sha256sum ./*.apk > SHA256SUMS.txt
           cat SHA256SUMS.txt
 
+      - name: Verifikasi APK
+        env:
+          VERSION: ${{ inputs.version || '1.1.0' }}
+        run: |
+          set -e
+          APK="dist/BitKeyboard-$VERSION-release.apk"
+          test -f "$APK"
+          AAPT2="$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -1)"
+          APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/lib/apksigner.jar | sort -V | tail -1)"
+          echo "--- badging ---"
+          "$AAPT2" dump badging "$APK" | grep -E "^package:|sdkVersion|uses-permission|launchable-activity|provides-component"
+          echo "--- tanda tangan ---"
+          java -jar "$APKSIGNER" verify --min-sdk-version 21 --print-certs "$APK" | grep -v "^WARNING"
+          echo "--- ukuran & checksum ---"
+          ls -l "$APK"
+          sha256sum "$APK"
+
       - name: Lampirkan ke Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
