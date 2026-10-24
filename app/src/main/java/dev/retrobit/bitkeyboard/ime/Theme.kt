@@ -24,7 +24,57 @@ class KeyboardTheme(
 ) {
     val actionText: Int get() = accentText
 
+    /** Salinan tema dengan warna aksen pilihan pengguna. */
+    fun withAccent(color: Int?): KeyboardTheme {
+        if (color == null) return this
+        val onAccent = if (luminance(color) > 0.62) Color.BLACK else Color.WHITE
+        return KeyboardTheme(
+            background = background,
+            suggestionBackground = suggestionBackground,
+            key = key,
+            keyPressed = keyPressed,
+            functionKey = functionKey,
+            actionKey = color,
+            spaceKey = spaceKey,
+            text = text,
+            hint = hint,
+            accent = color,
+            accentText = onAccent,
+            divider = divider,
+            trail = blend(color, if (isDark) Color.WHITE else Color.BLACK, 0.25f),
+            popupBackground = popupBackground,
+            isDark = isDark,
+        )
+    }
+
     companion object {
+        /** Terang/dark-nya sebuah warna (0..1) untuk memilih warna teks. */
+        fun luminance(color: Int): Double {
+            val r = Color.red(color) / 255.0
+            val g = Color.green(color) / 255.0
+            val b = Color.blue(color) / 255.0
+            return 0.2126 * r + 0.7152 * g + 0.0722 * b
+        }
+
+        fun blend(base: Int, other: Int, ratio: Float): Int {
+            val r = (Color.red(base) * (1 - ratio) + Color.red(other) * ratio).toInt()
+            val g = (Color.green(base) * (1 - ratio) + Color.green(other) * ratio).toInt()
+            val b = (Color.blue(base) * (1 - ratio) + Color.blue(other) * ratio).toInt()
+            return Color.rgb(r.coerceIn(0, 255), g.coerceIn(0, 255), b.coerceIn(0, 255))
+        }
+
+        /** Palet aksen yang ditawarkan di pengaturan. */
+        val ACCENT_CHOICES: List<Pair<String, Int>> = listOf(
+            "Biru" to 0xFF2D6CDF.toInt(),
+            "Tosca" to 0xFF0FA3A3.toInt(),
+            "Hijau" to 0xFF17A673.toInt(),
+            "Ungu" to 0xFF7C5CFF.toInt(),
+            "Oranye" to 0xFFF17C3A.toInt(),
+            "Merah" to 0xFFE0464B.toInt(),
+            "Pink" to 0xFFE8467C.toInt(),
+            "Abu" to 0xFF64748B.toInt(),
+        )
+
         val DARK = KeyboardTheme(
             background = Color.parseColor("#0F141A"),
             suggestionBackground = Color.parseColor("#151C24"),
@@ -79,13 +129,26 @@ class KeyboardTheme(
             isDark = true,
         )
 
-        fun resolve(settings: SettingsStore, nightMode: Boolean): KeyboardTheme =
-            when (settings.theme) {
+        fun resolve(settings: SettingsStore, nightMode: Boolean): KeyboardTheme {
+            val base = when (settings.theme) {
                 "light" -> LIGHT
                 "dark" -> DARK
                 "amoled" -> AMOLED
                 else -> if (nightMode) DARK else LIGHT
             }
+            val accent = parseColor(settings.accentColor)
+            return base.withAccent(accent)
+        }
+
+        /** `#RRGGBB` → warna, atau `null` bila kosong/tidak valid. */
+        fun parseColor(text: String): Int? {
+            if (text.length != 7 || !text.startsWith("#")) return null
+            return try {
+                Color.parseColor(text)
+            } catch (e: IllegalArgumentException) {
+                null
+            }
+        }
     }
 }
 

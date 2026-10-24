@@ -360,10 +360,11 @@ class Editor(
         val current = TextUtils.lastWordBefore(before)
         val rest = before.dropLast(current.length).trimEnd()
         val previous = TextUtils.lastWordBefore(rest)
+        val limit = settings.suggestionCount
         val list = if (current.isEmpty()) {
-            if (settings.nextWordPrediction) s.nextWords(previous, 3) else emptyList()
+            if (settings.nextWordPrediction) s.nextWords(previous, limit) else emptyList()
         } else {
-            s.onWord(current, previous, 3)
+            s.onWord(current, previous, limit)
         }
         l.onSuggestionsChanged(list, current)
     }

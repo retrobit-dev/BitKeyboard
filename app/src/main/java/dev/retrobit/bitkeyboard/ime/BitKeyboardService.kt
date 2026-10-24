@@ -2,6 +2,7 @@ package dev.retrobit.bitkeyboard.ime
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Handler
 import android.os.Looper
@@ -41,6 +42,22 @@ class BitKeyboardService : InputMethodService() {
     private var loading = false
     private var loadFailed = false
     private var pendingVoiceText: String? = null
+
+    /**
+     * Perubahan di layar pengaturan langsung dipakai keyboard yang terbuka.
+     *
+     * Hanya kunci yang memengaruhi tampilan/saran yang diproses; perubahan
+     * kamus pribadi (yang ditulis setiap kali belajar kata) tidak memicu
+     * pembangunan ulang layout.
+     */
+    private val settingsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == null || key in DISPLAY_KEYS) {
+            mainHandler.post {
+                keyboardView?.syncSettings()
+                editor.updateSuggestions()
+            }
+        }
+    }
     private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun onCreate() {
@@ -50,6 +67,7 @@ class BitKeyboardService : InputMethodService() {
         editor = Editor(this, settings)
         editor.setUserModel(userModel)
         active = WeakReference(this)
+        settings.registerListener(settingsListener)
         loadDictionary()
     }
 
@@ -208,8 +226,9 @@ class BitKeyboardService : InputMethodService() {
     private fun onVoiceText(text: String) {
         val clean = text.trim()
         if (clean.isEmpty()) return
+        val suffix = if (settings.voiceAutoSpace) " " else ""
         if (editor.isActiveInput()) {
-            editor.commitPlainText("$clean ")
+            editor.commitPlainText(clean + suffix)
         } else {
             pendingVoiceText = clean
         }
@@ -219,8 +238,9 @@ class BitKeyboardService : InputMethodService() {
         val text = pendingVoiceText ?: return
         pendingVoiceText = null
         if (text.isEmpty()) return
+        val suffix = if (settings.voiceAutoSpace) " " else ""
         mainHandler.postDelayed({
-            if (editor.isActiveInput()) editor.commitPlainText("$text ")
+            if (editor.isActiveInput()) editor.commitPlainText(text + suffix)
         }, 80)
     }
 
@@ -231,6 +251,7 @@ class BitKeyboardService : InputMethodService() {
     }
 
     override fun onDestroy() {
+        settings.unregisterListener(settingsListener)
         editor.listener = null
         keyboardView = null
         if (active?.get() === this) active = null
@@ -244,6 +265,15 @@ class BitKeyboardService : InputMethodService() {
 
     companion object {
         private const val TAG = "BitKeyboard"
+
+        /** Kunci preferensi yang mengubah tampilan keyboard. */
+        private val DISPLAY_KEYS = setOf(
+            "glide", "glide_trail", "suggestions", "suggestion_count", "autocorrect",
+            "next_word", "suggestion_bar", "suggestion_bar_height", "number_row",
+            "function_row", "corner_symbols", "key_height", "key_gap", "key_radius",
+            "key_font", "key_preview", "theme", "accent_color", "long_press_ms",
+            "space_cursor", "emoji_tab",
+        )
 
         /** IME aktif saat ini; voice typing berjalan di aktivitas terpisah. */
         private var active: WeakReference<BitKeyboardService>? = null

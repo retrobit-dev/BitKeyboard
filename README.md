@@ -9,6 +9,16 @@ ke sudut tombol), **glide typing**, **saran kata + autocorrect**, **simbol matem
 - Tanpa dependensi eksternal: hanya Android SDK + Kotlin stdlib.
 - Kamus 38.990 kata Indonesia tertanam di APK (±464 KB).
 - Mendukung Android 5.0 (API 21) hingga Android 15 (API 35).
+- **Semua bisa diatur**: ukuran & bentuk tombol, karakter sudut tiap tombol,
+  tema dan warna aksen, getaran, dikte suara, kamus pribadi, sampai
+  ekspor/impor pengaturan.
+
+**APK rilis siap pasang:** [`dist/BitKeyboard-1.1.0-release.apk`](dist/BitKeyboard-1.1.0-release.apk)
+(2,7 MB, ditandatangani v1+v2+v3, minSdk 21, targetSdk 35, versionCode 2).
+
+```
+SHA-256  1f44795ed4ebe41b073b92cb5be3854091ea5dae703dbd0a59b78a63d211cbe1
+```
 
 ---
 
@@ -76,6 +86,23 @@ pengenalan suara di perangkat (biasanya Google Speech Services), yang pada
 beberapa perangkat memerlukan koneksi internet sendiri. Bila tidak ada penyedia,
 muncul pesan yang jelas.
 
+### Pengaturan lengkap
+
+Semua bisa diubah dari aplikasi **BitKeyboard** tanpa perlu build ulang.
+Perubahan langsung dipakai keyboard yang sedang terbuka.
+
+| Kelompok | Yang bisa diatur |
+| --- | --- |
+| Mengetik | glide, jejak geser, saran kata, jumlah saran (1–6), bilah saran, autocorrect, prediksi kata berikutnya, kapital otomatis, spasi ganda → titik, spasi setelah saran, backspace menghapus kata hasil glide, geser spasi untuk kursor, lama tekan popup (200–900 ms) |
+| Tombol & tata letak | baris angka, baris fungsi (Esc/Tab/Ctrl/Alt/panah/Home), karakter sudut, tinggi tombol (36–76 dp), tinggi bilah saran (30–60 dp), jarak antar tombol (0–8 dp), lengkung tombol (0–16 dp), ukuran huruf (80–130%), pratinjau tekan, **editor karakter tiap tombol**, reset tombol |
+| Editor tombol | ubah **empat sudut** (kiri atas, kanan atas, kiri bawah, kanan bawah) dan **daftar tekan-lama** untuk setiap tombol huruf, angka, simbol, dan ilmiah — atau kembalikan satu tombol/tombol sekaligus ke bawaan |
+| Tampilan | tema Ikuti sistem/Terang/Gelap/AMOLED, warna aksen (bawaan + 8 pilihan), pratinjau langsung |
+| Suara & getaran | suara klik, getaran, kekuatan getaran (halus/sedang/kuat) |
+| Dikte suara | bahasa pengenalan (id-ID/en-US/ikuti sistem), spasi otomatis setelah dikte |
+| Kamus pribadi | jumlah kata tersimpan, tambah kata, lihat & hapus per kata, hapus semua |
+| Emoji | hapus riwayat emoji |
+| Cadangan | ekspor semua pengaturan sebagai teks (salin/bagikan), impor, reset pengaturan, hapus semua data belajar |
+
 ### Privasi
 
 - Tidak ada izin `INTERNET` di manifest — aplikasi secara teknis tidak bisa
@@ -88,6 +115,24 @@ muncul pesan yang jelas.
 ---
 
 ## Instalasi
+
+### APK rilis (paling cepat)
+
+Unduh [`dist/BitKeyboard-1.1.0-release.apk`](dist/BitKeyboard-1.1.0-release.apk)
+lalu pasang di perangkat:
+
+```bash
+adb install -r dist/BitKeyboard-1.1.0-release.apk
+```
+
+Atau salin APK ke ponsel dan buka dari pengelola berkas (izinkan
+"instal dari sumber tidak dikenal" untuk aplikasi pengelola berkas tersebut).
+
+APK ditandatangani dengan kunci rilis proyek di
+`keystore/bitkeyboard-release.jks` (kata sandi `bitkeyboard`, alias
+`bitkeyboard`). Kunci ini hanya untuk distribusi internal/uji — ganti dengan
+kunci Anda sendiri sebelum publikasi ke Play Store, dan jangan bagikan
+keystore produksi.
 
 ### Dari source
 
@@ -117,6 +162,23 @@ Aktifkan keyboard:
 
 Android Studio akan mengunduh Android SDK yang diperlukan saat sinkronisasi
 pertama. Tanpa Android Studio, set `ANDROID_HOME` ke SDK yang sudah terpasang.
+
+### Build APK tanpa Gradle
+
+Untuk lingkungan terbatas (tanpa Gradle/AGP), ada jalur build manual memakai
+`aapt2`, `d8`, dan `apksigner` yang menghasilkan APK release bertanda tangan:
+
+```bash
+export JAVA_HOME=/path/ke/jdk17
+export ANDROID_HOME=/path/ke/android-sdk       # butuh platforms/android-35 & build-tools
+export KOTLINC=/path/ke/kotlinc
+tools/build_apk.sh 1.1.0
+# hasil: dist/BitKeyboard-1.1.0-release.apk
+```
+
+Skrip memakai `tools/apkpack.py` untuk menambahkan `classes.dex` ke APK hasil
+`aapt2 link` sekaligus menyelaraskan `resources.arsc`/`classes.dex` pada batas
+4 byte (setara `zipalign -p 4`).
 
 ---
 
@@ -151,6 +213,7 @@ app/src/main/java/dev/retrobit/bitkeyboard/
 │   ├── Dictionary.kt      # trie + daftar kata terurut frekuensi (format ringkas)
 │   ├── BigramModel.kt     # prediksi kata berikutnya
 │   ├── UserModel.kt       # kamus pribadi + riwayat bigram pengguna
+│   ├── KeyCustomization.kt # penimpaan sudut/tekan-lama tombol + serialisasi
 │   ├── Suggester.kt       # pelengkapan, koreksi, prediksi, pembelajaran
 │   ├── GlideDecoder.kt    # template jalur + prefilter + DTW
 │   └── TextUtils.kt       # kapitalisasi, pemisah kata, deteksi huruf
@@ -161,8 +224,9 @@ app/src/main/java/dev/retrobit/bitkeyboard/
 │   ├── VoiceInputActivity.kt  # panel SpeechRecognizer + izin mikrofon
 │   └── Theme.kt               # palet terang/gelap
 └── settings/
-    ├── SettingsStore.kt    # SharedPreferences + PrefsUserModel
-    └── SettingsActivity.kt # UI pengaturan tanpa AndroidX (programatik)
+    ├── SettingsStore.kt    # SharedPreferences, ekspor/impor, PrefsUserModel
+    ├── SettingsActivity.kt # semua pengaturan, UI programatik tanpa AndroidX
+    └── KeyEditorActivity.kt # editor empat sudut + tekan-lama per tombol
 ```
 
 Prinsip yang dipakai:
@@ -223,7 +287,8 @@ Menjalankan `tools/jvmtest/CoreTests.kt` di JVM tanpa Android SDK:
 - decoder glide: akurasi top-1/top-5 dengan dan tanpa noise, batas waktu;
 - layout: jumlah kolom, lebar baris, keberadaan simbol ilmiah dan emoji.
 
-Hasil terakhir: **106/106 pemeriksaan lulus**.
+Hasil terakhir: **124/124 pemeriksaan lulus** (termasuk serialisasi
+kustomisasi tombol, penerapannya ke layout, serta validasi data yang rusak).
 
 ---
 
@@ -242,3 +307,12 @@ dasar Sastrawi adalah MIT.
 - Emoji: Unicode Emoji (Unicode Consortium).
 
 Nama dan logo adalah milik proyek. Kontribusi diterima lewat pull request.
+
+### Riwayat versi
+
+- **1.1.0** — semua pengaturan bisa diubah dari aplikasi: ukuran/bentuk tombol,
+  editor karakter sudut & tekan-lama per tombol, warna aksen, kekuatan getaran,
+  jumlah saran, lama tekan, ekspor/impor pengaturan, kelola kamus pribadi,
+  pratinjau langsung. APK release bertanda tangan di `dist/`.
+- **1.0.0** — rilis pertama: glide typing, saran/autocorrect, simbol ilmiah,
+  emoji, voice typing, kamus 38.990 kata.

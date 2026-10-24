@@ -6,6 +6,7 @@ app/build/
 .gradle/
 local.properties
 *.apk
+!dist/*.apk
 *.aab
 *.hprof
 
@@ -19,6 +20,9 @@ tools/.cache/
 
 # Demo hasil kompilasi Kotlin/JS
 demo/dist/
+
+# Berkas tanda tangan (id-sig) tidak perlu disimpan
+*.idsig
 
 # OS
 .DS_Store

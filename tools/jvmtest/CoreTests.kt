@@ -3,6 +3,9 @@ import dev.retrobit.bitkeyboard.core.Dictionary
 import dev.retrobit.bitkeyboard.core.GlideDecoder
 import dev.retrobit.bitkeyboard.core.GlidePoint
 import dev.retrobit.bitkeyboard.core.InMemoryUserModel
+import dev.retrobit.bitkeyboard.core.KeyCustomization
+import dev.retrobit.bitkeyboard.core.KeyOverride
+import dev.retrobit.bitkeyboard.core.KeyValue
 import dev.retrobit.bitkeyboard.core.Layer
 import dev.retrobit.bitkeyboard.core.Layouts
 import dev.retrobit.bitkeyboard.core.QwertyGeometry
@@ -139,6 +142,51 @@ fun main() {
     val straightAcc = straight1 * 100.0 / 200
     println("Glide tanpa noise: top1=%.1f%%".format(straightAcc))
     check(straightAcc >= 93.0, "akurasi glide jalur bersih >= 93%")
+
+    // ------------------------- kustomisasi tombol -------------------------
+    run {
+        val groups = KeyCustomization.editableKeyGroups()
+        check(groups.isNotEmpty(), "grup tombol bisa dikustomisasi tersedia")
+        val allIds = groups.flatMap { g -> g.second.map { KeyCustomization.idFor(it) } }
+        check(allIds.size == allIds.toSet().size, "tidak ada id tombol ganda di editor")
+        check(allIds.contains("q") && allIds.contains("shift").not(), "huruf ada, tombol aksi tidak")
+        check(groups.any { it.first == "Ilmiah" }, "layer ilmiah ikut bisa dikustomisasi")
+
+        // parse & serialize bolak-balik
+        val map = mapOf(
+            "q" to KeyOverride(corners = listOf("1", "!", "`", "~"), longPress = null),
+            "e" to KeyOverride(corners = null, longPress = listOf("è", "é", "ê")),
+            "w" to KeyOverride(corners = listOf("2", null, "-", "_"), longPress = listOf("w")),
+        )
+        val text = KeyCustomization.serialize(map)
+        val parsed = KeyCustomization.parse(text)
+        checkEq(parsed.size, 3, "tiga penimpaan terbaca")
+        checkEq(parsed["q"]?.corners, listOf("1", "!", "`", "~"), "sudut q terbaca termasuk ~")
+        checkEq(parsed["e"]?.longPress, listOf("è", "é", "ê"), "tekan lama e terbaca")
+        checkEq(parsed["w"]?.corners?.get(1), null, "sudut kosong di tengah tetap kosong")
+        checkEq(KeyCustomization.serialize(parsed), text, "serialisasi stabil")
+
+        // terapkan ke layout huruf
+        val base = Layouts.letters(false, false)
+        val applied = KeyCustomization.apply(base, map)
+        val baseQ = base.rows.flatMap { it.keys }.first { KeyCustomization.idFor(it) == "q" }
+        val appliedQ = applied.rows.flatMap { it.keys }.first { KeyCustomization.idFor(it) == "q" }
+        checkEq(appliedQ.corners.firstOrNull()?.let { (it as KeyValue.CharValue).char }, '1', "sudut q jadi 1")
+        checkEq(baseQ.corners.firstOrNull()?.let { (it as KeyValue.CharValue).char }, '1', "layout asal tidak berubah (immutable)")
+        val appliedE = applied.rows.flatMap { it.keys }.first { KeyCustomization.idFor(it) == "e" }
+        check(appliedE.longPress.size == 3, "tekan lama e diganti tiga aksen")
+
+        // entri kosong / rusak diabaikan
+        checkEq(KeyCustomization.parse("").size, 0, "teks kosong -> tanpa penimpaan")
+        checkEq(KeyCustomization.parse("rusak;;q=").size, 0, "entri tanpa nilai diabaikan")
+        checkEq(KeyCustomization.parse("q=1|!").size, 1, "entri sudut sebagian diterima")
+        checkEq(KeyCustomization.parse("q=1|!")["q"]?.corners?.size, 4, "sudut selalu empat slot")
+
+        // withEntry / hapus
+        val withNew = KeyCustomization.withEntry(emptyMap(), "a", KeyOverride(corners = listOf("@", null, null, null)))
+        checkEq(withNew.size, 1, "entri baru ditambahkan")
+        checkEq(KeyCustomization.withEntry(withNew, "a", null).size, 0, "entri bisa dihapus")
+    }
 
     // ------------------------- hasil -------------------------
     println()

@@ -33,6 +33,11 @@
         </activity>
 
         <activity
+            android:name="dev.retrobit.bitkeyboard.settings.KeyEditorActivity"
+            android:exported="false"
+            android:label="@string/key_editor_title" />
+
+        <activity
             android:name="dev.retrobit.bitkeyboard.ime.VoiceInputActivity"
             android:excludeFromRecents="true"
             android:exported="false"

@@ -5,4 +5,5 @@
     <string name="ime_description">Keyboard Bahasa Indonesia dengan glide typing, saran kata, autocorrect, simbol ilmiah, dan emoji. Tanpa iklan dan tanpa internet.</string>
     <string name="subtype_id">Indonesia</string>
     <string name="settings_activity">Pengaturan BitKeyboard</string>
+    <string name="key_editor_title">Karakter tombol</string>
 </resources>

@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
@@ -28,6 +29,7 @@ import dev.retrobit.bitkeyboard.core.Layouts
 import dev.retrobit.bitkeyboard.core.QwertyGeometry
 import dev.retrobit.bitkeyboard.core.GlidePoint
 import dev.retrobit.bitkeyboard.core.Suggester
+import dev.retrobit.bitkeyboard.core.KeyCustomization
 import dev.retrobit.bitkeyboard.settings.SettingsStore
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -163,19 +165,26 @@ class KeyboardView(
     fun syncSettings() {
         theme = KeyboardTheme.resolve(settings, isNightMode(resources.configuration))
         emojiTab = settings.emojiTab
-        rebuildLayout()
         applyPaints()
-        requestLayout()
-        invalidate()
+        relayout()
     }
 
+    // Nilai tampilan di-cache agar onDraw tidak membaca SharedPreferences
+    // berulang kali untuk setiap tombol pada setiap frame.
+    private var fontScale = 1f
+    private var keyGapDp = 3f
+    private var keyRadiusDp = 7f
+
     private fun applyPaints() {
+        fontScale = settings.keyFontPercent / 100f
+        keyGapDp = settings.keyGapDp.toFloat()
+        keyRadiusDp = settings.keyRadiusDp.toFloat()
         keyTextPaint.color = theme.text
-        keyTextPaint.textSize = sp(20f)
+        keyTextPaint.textSize = sp(20f * fontScale)
         cornerPaint.color = theme.hint
-        cornerPaint.textSize = sp(8.5f)
+        cornerPaint.textSize = sp(8.5f * fontScale)
         actionTextPaint.color = theme.actionText
-        actionTextPaint.textSize = sp(15f)
+        actionTextPaint.textSize = sp(15f * fontScale)
         hintPaint.color = theme.hint
         hintPaint.textSize = sp(12f)
         dividerPaint.color = theme.divider
@@ -190,13 +199,18 @@ class KeyboardView(
         layout = buildLayout(layer)
     }
 
-    private fun buildLayout(value: Layer): KeyboardLayout = when (value) {
-        Layer.LETTERS -> Layouts.letters(settings.numberRow, settings.functionRow)
-        Layer.SYMBOLS -> Layouts.symbols()
-        Layer.SYMBOLS_ALT -> Layouts.symbolsAlt()
-        Layer.SCIENTIFIC -> Layouts.scientific()
-        Layer.SCIENTIFIC_ALT -> Layouts.scientificAlt()
-        Layer.EMOJI -> EmojiData.layout(emojiTab, settings.emojiRecent)
+    private fun buildLayout(value: Layer): KeyboardLayout {
+        val base = when (value) {
+            Layer.LETTERS -> Layouts.letters(settings.numberRow, settings.functionRow)
+            Layer.SYMBOLS -> Layouts.symbols()
+            Layer.SYMBOLS_ALT -> Layouts.symbolsAlt()
+            Layer.SCIENTIFIC -> Layouts.scientific()
+            Layer.SCIENTIFIC_ALT -> Layouts.scientificAlt()
+            Layer.EMOJI -> EmojiData.layout(emojiTab, settings.emojiRecent)
+        }
+        // Kustomisasi tombol dari pengaturan hanya berlaku bila sudut aktif.
+        if (value == Layer.EMOJI) return base
+        return KeyCustomization.apply(base, settings.keyOverrides())
     }
 
     fun setLayer(value: Layer) {
@@ -251,7 +265,7 @@ class KeyboardView(
     // ------------------------------------------------------------------ //
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = MeasureSpec.getSize(widthMeasureSpec)
-        val bar = if (settings.showSuggestionBar) dp(42f) else 0f
+        val bar = if (settings.showSuggestionBar) dp(settings.suggestionBarHeightDp.toFloat()) else 0f
         val row = dp(settings.keyHeightDp.toFloat())
         var rows = 0f
         for (r in layout.rows) rows += row * r.height
@@ -261,7 +275,7 @@ class KeyboardView(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        barHeight = if (settings.showSuggestionBar) dp(42f) else 0f
+        barHeight = if (settings.showSuggestionBar) dp(settings.suggestionBarHeightDp.toFloat()) else 0f
         rowHeight = dp(settings.keyHeightDp.toFloat())
         keyWidth = w / layout.columns
         rebuildGeometry(w.toFloat())
@@ -288,7 +302,7 @@ class KeyboardView(
             if (rowUnits < layout.columns) x += (layout.columns - rowUnits) * keyWidth / 2f
             for (spec in rowSpec.keys) {
                 val w = spec.width * keyWidth
-                val gap = dp(2.5f)
+                val gap = dp(keyGapDp)
                 keys += PositionedKey(
                     spec,
                     RectF(x + gap, top + gap, x + w - gap, top + rowH - gap),
@@ -413,7 +427,7 @@ class KeyboardView(
                 else -> theme.key
             }
             keyPaint.color = bg
-            val radius = dp(7f)
+            val radius = dp(keyRadiusDp)
             canvas.drawRoundRect(rect, radius, radius, keyPaint)
 
             val textValue = spec.value as? KeyValue.TextValue
@@ -421,10 +435,10 @@ class KeyboardView(
                 if (textValue.text.isBlank()) continue
                 val paint = keyTextPaint
                 paint.color = theme.text
-                paint.textSize = sp(23f)
+                paint.textSize = sp(23f * fontScale)
                 paint.textAlign = Paint.Align.CENTER
                 canvas.drawText(textValue.text, rect.centerX(), rect.centerY() + sp(8f), paint)
-                paint.textSize = sp(20f)
+                paint.textSize = sp(20f * fontScale)
                 continue
             }
 
@@ -447,9 +461,9 @@ class KeyboardView(
             paint.textAlign = Paint.Align.CENTER
             val isTextLabel = label.length > 2
             paint.textSize = when {
-                spec.style == KeyStyle.FUNCTION || spec.style == KeyStyle.SPACE -> sp(13f)
-                isTextLabel -> sp(13f)
-                else -> sp(20f)
+                spec.style == KeyStyle.FUNCTION || spec.style == KeyStyle.SPACE -> sp(13f * fontScale)
+                isTextLabel -> sp(13f * fontScale)
+                else -> sp(20f * fontScale)
             }
             canvas.drawText(label, rect.centerX(), rect.centerY() + paint.textSize * 0.36f, paint)
             if (spec.style == KeyStyle.MODIFIER) {
@@ -457,7 +471,7 @@ class KeyboardView(
             }
         }
         keyTextPaint.color = theme.text
-        keyTextPaint.textSize = sp(20f)
+        keyTextPaint.textSize = sp(20f * fontScale)
     }
 
     private fun drawCorners(canvas: Canvas, pk: PositionedKey) {
@@ -467,7 +481,7 @@ class KeyboardView(
         val baselineTop = pk.rect.top + dp(10.5f)
         val baselineBottom = pk.rect.bottom - dp(3.5f)
         cornerPaint.color = theme.hint
-        cornerPaint.textSize = sp(8.2f)
+        cornerPaint.textSize = sp(8.2f * fontScale)
         for (i in corners.indices) {
             val value = corners[i] ?: continue
             val label = cornerLabel(value)
@@ -480,6 +494,7 @@ class KeyboardView(
     }
 
     private fun drawTrail(canvas: Canvas) {
+        if (!settings.glideTrail) return
         if (!gliding || glidePoints.size < 2) return
         trailPath.reset()
         val first = glidePoints[0]
@@ -522,7 +537,7 @@ class KeyboardView(
     }
 
     private fun drawPreview(canvas: Canvas) {
-        if (!previewVisible || downKey == null || popup != null || gliding) return
+        if (!settings.keyPreview || !previewVisible || downKey == null || popup != null || gliding) return
         val pk = downKey!!
         val label = cornerDirection?.let { dir ->
             pk.spec.corner(dir)?.let { cornerLabel(it) }
@@ -613,7 +628,7 @@ class KeyboardView(
                 }
             }
             longPressRunnable = runnable
-            handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout().toLong())
+            handler.postDelayed(runnable, settings.longPressMs.toLong())
         }
         if (pk.spec.repeat) scheduleRepeat(pk)
         invalidate()
@@ -645,7 +660,7 @@ class KeyboardView(
 
         // Geser pada spasi: pindahkan kursor.
         val pressedAction = pk.spec.value as? KeyValue.ActionValue
-        if (!gliding && pressedAction?.action == KeyboardAction.SPACE) {
+        if (!gliding && settings.swipeCursorOnSpace && pressedAction?.action == KeyboardAction.SPACE) {
             if (abs(dx) > keyWidth * 0.55f) {
                 val steps = (dx / (keyWidth * 0.52f)).roundToInt()
                 var delta = steps - lastSpaceSteps
@@ -998,7 +1013,7 @@ class KeyboardView(
             }
         }
         suggestionLongPressRunnable = runnable
-        handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout().toLong())
+        handler.postDelayed(runnable, settings.longPressMs.toLong())
     }
 
     private fun cancelTimers() {
@@ -1121,11 +1136,38 @@ class KeyboardView(
         }
     }
 
+    /** Kekuatan getaran 1–3 dipetakan ke durasi ms yang berbeda. */
     private fun performHaptic(feedback: Int) {
         if (!settings.vibrateEnabled) return
+        val strength = settings.hapticStrength
+        if (strength == 2) {
+            try {
+                @Suppress("DEPRECATION")
+                performHapticFeedback(feedback, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+            } catch (ignored: Exception) {
+            }
+            return
+        }
         try {
-            @Suppress("DEPRECATION")
-            performHapticFeedback(feedback, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val manager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE)
+                    as? android.os.VibratorManager
+                manager?.defaultVibrator
+            } else {
+                @Suppress("DEPRECATION")
+                context.getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+            }
+            if (vibrator == null || !vibrator.hasVibrator()) return
+            val ms = when {
+                feedback == HapticFeedbackConstants.LONG_PRESS -> if (strength == 3) 28L else 12L
+                else -> if (strength == 3) 18L else 8L
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(android.os.VibrationEffect.createOneShot(ms, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(ms)
+            }
         } catch (ignored: Exception) {
         }
     }
