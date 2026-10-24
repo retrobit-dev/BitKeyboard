@@ -20,6 +20,15 @@ ke sudut tombol), **glide typing**, **saran kata + autocorrect**, **simbol matem
 SHA-256  1f44795ed4ebe41b073b92cb5be3854091ea5dae703dbd0a59b78a63d211cbe1
 ```
 
+Tautan unduh langsung (selalu versi terbaru):
+
+- [`dist/BitKeyboard-release.apk`](dist/BitKeyboard-release.apk)
+- [`dist/BitKeyboard-1.1.0-release.apk`](dist/BitKeyboard-1.1.0-release.apk)
+- Checksum: [`dist/SHA256SUMS.txt`](dist/SHA256SUMS.txt)
+
+Di ponsel: buka tautan berkas, unduh, lalu buka dari pengelola berkas dan
+izinkan "instal dari sumber tidak dikenal" untuk pengelola berkas tersebut.
+
 ---
 
 ## Fitur
